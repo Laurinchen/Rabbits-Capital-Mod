@@ -95,7 +95,11 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder, addNe
         ---@type GamePlayer
         local ToPlayer = game.Game.PlayingPlayers[territory.OwnerPlayerID];
 
-        if Mod.PrivateGameData.PlayerCapitals[ToPlayer.ID] == territory.ID and FromPlayer.Team ~= -1 and ToPlayer.Team ~= -1 and ToPlayer.Team == FromPlayer.Team then
+        print("Mod.PrivateGameData.PlayerCapitals", Mod.PrivateGameData.PlayerCapitals);
+        print("ToPlayer", ToPlayer);
+        print("territory", territory);
+        print("FromPlayer", FromPlayer)
+        if ToPlayer ~= nil and Mod.PrivateGameData.PlayerCapitals[ToPlayer.ID] == territory.ID and FromPlayer.Team ~= -1 and ToPlayer.Team ~= -1 and ToPlayer.Team == FromPlayer.Team then
             addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Cannot attack capital from teammate", {}, {}, {}, {}));
             skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
         else
