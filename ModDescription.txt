@@ -1,0 +1,11 @@
+---IMPORTANT---
+If the host enabled "Players choose their own capital locations", you must go to the Mod Menu of this mod (Under "Game" on the bottom left)
+and select a territory to place your capital on in the first turn. Otherwise a random territory will assigned to your capital.
+---Important part over---
+Welcome to Kaninchens Capital mod.
+In this Mod, every players owns their own capital, the capital must be protected at all cost.
+It should also be a priority to capture other capitals.
+Note that you cannot attack a teammates capital or gift your own capital away.
+You can look at all capitals you own in the Mod Menu.
+
+If you found any bugs or want to give feedback I'm available on Warzone ( https://www.warzone.com/Profile?p=54104866712 ) and Discord ( @laurinchen2 )
