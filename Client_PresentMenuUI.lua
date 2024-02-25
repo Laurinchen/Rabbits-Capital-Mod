@@ -100,6 +100,9 @@ end
 ListOwnedCapitals = function(game, UIGroup)
     ---@type {TerritoryID: TerritoryID, CapitalType: CapitalTypes}[]
     local capitals = Mod.PlayerGameData.ownedCapitals
+    if capitals == nil then
+        return;
+    end
 
     for _, capital in ipairs(capitals) do
         ---@type string

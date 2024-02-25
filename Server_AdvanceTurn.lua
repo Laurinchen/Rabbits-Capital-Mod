@@ -120,7 +120,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
         local winners = {};
         ---@type table<PlayerID, boolean>
         local allPlayersOwningCapitals = {};
-        ---@type table<TeamID, PlayerID[]>;
+        ---@type table<TeamID, boolean>;
         local allTeamsOwningCapitals = {};
         ---@type integer
         local allPlayersOwningCapitalsSize = 0
@@ -140,49 +140,62 @@ function Server_AdvanceTurn_End(game, addNewOrder)
                 ---@local TeamID
                 local teamid = game.Game.PlayingPlayers[playerid].Team;
 
-                if teamid ~= -1 then
-                    if allTeamsOwningCapitals[teamid] == nil then
-                        allTeamsOwningCapitals[teamid] = {};
-                        allTeamsOwningCapitalsSize = allTeamsOwningCapitalsSize + 1;
-                    end
-                    table.insert(allTeamsOwningCapitals[teamid], playerid);
+                if teamid ~= -1 and allTeamsOwningCapitals[teamid] == nil then
+                    allTeamsOwningCapitals[teamid] = true;
+                    allTeamsOwningCapitalsSize = allTeamsOwningCapitalsSize + 1;
                 end
+            else
+                goto neutralOwnsCapitalThereforeNooneWins;
             end
         end
 
         if allPlayersOwningCapitalsSize == 1 then
+            print("REACHED1")
             ---@type PlayerID
             for playerid, _ in pairs(allPlayersOwningCapitals) do
-                table.insert(winners, playerid)
-            end
-        elseif allTeamsOwningCapitalsSize == 1 then
-            for _, winningteam in pairs(allTeamsOwningCapitals) do
-                winners = winningteam;
+                if game.Game.PlayingPlayers[playerid].Team == -1 then
+                    table.insert(winners, playerid)
+                end
             end
         end
-        print(allPlayersOwningCapitals)
+        if allTeamsOwningCapitalsSize == 1 then
+            print("REACHED2")
+            ---@type TeamID
+            local winningteamID;
+
+            for winningteam, _ in pairs(allTeamsOwningCapitals) do
+                winningteamID = winningteam;
+            end
+
+            for playerid, gameplayer in pairs(game.Game.PlayingPlayers) do
+                if gameplayer.Team == winningteamID then
+                    table.insert(winners, playerid);
+                end
+            end
+
+        end
 
         if #winners ~= 0 then
             ---@type TerritoryModification[]
             local terrmods = {};
             for territoryID, standing in pairs(game.ServerGame.LatestTurnStanding.Territories) do
-                if standing.OwnerPlayerID ~= WL.PlayerID.Neutral and standing.OwnerPlayerID ~= winner then
+                if standing.OwnerPlayerID ~= WL.PlayerID.Neutral and not InValues(winners, standing.OwnerPlayerID) then
                     ---@type TerritoryModification
                     local terrmod = WL.TerritoryModification.Create(territoryID);
 
-                    --FIX THAT
                     terrmod.SetOwnerOpt = winners[math.random(#winners)];
 
                     table.insert(terrmods, terrmod);
                 end
             end
-            addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral, "All capitals are owned by 1 player/team. Congratulations!", winners,
+            addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,
+                "All capitals are owned by 1 player/team. Congratulations!", winners,
                 terrmods, {}, {}));
             return;
         end
     end
 
-
+    ::neutralOwnsCapitalThereforeNooneWins::
 
 
     ---@type table<PlayerID, {bonus: integer, punish: boolean}>

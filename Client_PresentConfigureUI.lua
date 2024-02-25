@@ -77,12 +77,6 @@ function Client_PresentConfigureUI(rootParent)
     ---@type HorizontalLayoutGroup
     local UIGroup = UI.CreateVerticalLayoutGroup(rootParent);
 
-    ---@type Label
-    local UIMainInfo = UI.CreateLabel(UIGroup);
-
-    ---@type Label
-    local UICreatorsInfo = UI.CreateLabel(UIGroup);
-
     ---@type CheckBox
     UILoseOnGettingCapitalConquered = UI.CreateCheckBox(UIGroup);
 
@@ -123,21 +117,6 @@ function Client_PresentConfigureUI(rootParent)
     UIStructureTypeInfo = UI.CreateLabel(UIGroup);
 
     --Add content to UI elements
-
-    --UIMainInfo
-    UIMainInfo.SetText(
-        [[Welcome to Kaninchens Capital Mod. Every player get their own Capital and you can decide here if they immediately lose if their capital gets conquered
-or if they just get an punishment, what kind of punishment, bonuses for holding 1 or more capitals and more!
-Enjoy.]]);
-
-    --UICreatorsInfo
-    ---@type string
-    local creators = "By\n";
-    for _, name in pairs(Creators) do
-        creators = creators .. "    ·" .. name .. "\n";
-    end
-    creators = creators .. "\n\n";
-    UICreatorsInfo.SetText(creators);
 
     --UILoseOnGettingCapitalConquered
     UILoseOnGettingCapitalConquered.SetText("Should a player immediately lose if they lose their capital?");

@@ -9,3 +9,8 @@ Note that you cannot attack a teammates capital or gift your own capital away.
 You can look at all capitals you own in the Mod Menu.
 
 If you found any bugs or want to give feedback I'm available on Warzone ( https://www.warzone.com/Profile?p=54104866712 ) and Discord ( @laurinchen2 )
+
+Head dev:
+    Warzone: Kaninchen | Discord: @laurinchen2
+devs:
+    none
