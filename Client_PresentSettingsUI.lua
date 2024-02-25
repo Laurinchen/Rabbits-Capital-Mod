@@ -51,7 +51,7 @@ Depending on the host settings there might be bonuses for taking over other capi
 
     ---@type Label
     local UIWinAutomaticallyIfOwningAllCapitalsText = UI.CreateLabel(UIWinAutomaticallyIfOwningAllCapitals);
-    UIWinAutomaticallyIfOwningAllCapitalsText.SetText("Player will win automatically if they own all capitals: ");
+    UIWinAutomaticallyIfOwningAllCapitalsText.SetText("Player/Team will win automatically if they own all capitals: ");
 
     ---@type Label
     local UIWinAutomaticallyIfOwningAllCapitalsValue = UI.CreateLabel(UIWinAutomaticallyIfOwningAllCapitals);

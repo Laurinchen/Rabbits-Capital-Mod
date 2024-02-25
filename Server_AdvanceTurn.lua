@@ -116,37 +116,67 @@ end
 ---@param addNewOrder fun(order: GameOrder) # Adds a game order, will be processed before any of the rest of the orders
 function Server_AdvanceTurn_End(game, addNewOrder)
     if Mod.Settings.WinAutomaticallyIfOwningAllCapitals then
+        ---@type PlayerID[]
+        local winners = {};
         ---@type table<PlayerID, boolean>
         local allPlayersOwningCapitals = {};
+        ---@type table<TeamID, PlayerID[]>;
+        local allTeamsOwningCapitals = {};
+        ---@type integer
+        local allPlayersOwningCapitalsSize = 0
+        ---@type integer
+        local allTeamsOwningCapitalsSize = 0;
 
 
         for _, territoryID in pairs(Mod.PrivateGameData.PlayerCapitals) do
-            allPlayersOwningCapitals[game.ServerGame.LatestTurnStanding.Territories[territoryID].OwnerPlayerID] = true;
-        end
+            ---@type PlayerID
+            local playerid = game.ServerGame.LatestTurnStanding.Territories[territoryID].OwnerPlayerID;
 
-        ---@type integer
-        local allPlayersOwningCapitalsSize = 0;
-        for _, _ in pairs(allPlayersOwningCapitals) do
-            allPlayersOwningCapitalsSize = allPlayersOwningCapitalsSize + 1;
+            if playerid ~= WL.PlayerID.Neutral then
+                if allPlayersOwningCapitals[playerid] == nil then
+                    allPlayersOwningCapitals[playerid] = true;
+                    allPlayersOwningCapitalsSize = allPlayersOwningCapitalsSize + 1;
+                end
+                ---@local TeamID
+                local teamid = game.Game.PlayingPlayers[playerid].Team;
+
+                if teamid ~= -1 then
+                    if allTeamsOwningCapitals[teamid] == nil then
+                        allTeamsOwningCapitals[teamid] = {};
+                        allTeamsOwningCapitalsSize = allTeamsOwningCapitalsSize + 1;
+                    end
+                    table.insert(allTeamsOwningCapitals[teamid], playerid);
+                end
+            end
         end
 
         if allPlayersOwningCapitalsSize == 1 then
             ---@type PlayerID
-            local winner;
             for playerid, _ in pairs(allPlayersOwningCapitals) do
-                winner = playerid;
+                table.insert(winners, playerid)
             end
+        elseif allTeamsOwningCapitalsSize == 1 then
+            for _, winningteam in pairs(allTeamsOwningCapitals) do
+                winners = winningteam;
+            end
+        end
+        print(allPlayersOwningCapitals)
+
+        if #winners ~= 0 then
             ---@type TerritoryModification[]
             local terrmods = {};
             for territoryID, standing in pairs(game.ServerGame.LatestTurnStanding.Territories) do
                 if standing.OwnerPlayerID ~= WL.PlayerID.Neutral and standing.OwnerPlayerID ~= winner then
                     ---@type TerritoryModification
                     local terrmod = WL.TerritoryModification.Create(territoryID);
-                    terrmod.SetOwnerOpt = winner;
+
+                    --FIX THAT
+                    terrmod.SetOwnerOpt = winners[math.random(#winners)];
+
                     table.insert(terrmods, terrmod);
                 end
             end
-            addNewOrder(WL.GameOrderEvent.Create(winner, "All capitals are owned by 1 player. Congratulations!", {},
+            addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral, "All capitals are owned by 1 player/team. Congratulations!", winners,
                 terrmods, {}, {}));
             return;
         end

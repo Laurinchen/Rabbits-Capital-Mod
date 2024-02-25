@@ -145,7 +145,7 @@ Enjoy.]]);
     UILoseOnGettingCapitalConquered.SetOnValueChanged(UILoseOnGettingCapitalConqueredInteracted);
 
     --UIWinAutomaticallyIfOwningAllCapitals
-    UIWinAutomaticallyIfOwningAllCapitals.SetText("Should a player owning all capitals automatically win?");
+    UIWinAutomaticallyIfOwningAllCapitals.SetText("Should a player/team owning all capitals automatically win?");
     UIWinAutomaticallyIfOwningAllCapitals.SetIsChecked(InitialWinAutomaticallyIfOwningAllCapitals);
     
     --UIInfoCapitalBonus
