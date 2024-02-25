@@ -95,10 +95,6 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder, addNe
         ---@type GamePlayer
         local ToPlayer = game.Game.PlayingPlayers[territory.OwnerPlayerID];
 
-        print("Mod.PrivateGameData.PlayerCapitals", Mod.PrivateGameData.PlayerCapitals);
-        print("ToPlayer", ToPlayer);
-        print("territory", territory);
-        print("FromPlayer", FromPlayer)
         if ToPlayer ~= nil and Mod.PrivateGameData.PlayerCapitals[ToPlayer.ID] == territory.ID and FromPlayer.Team ~= -1 and ToPlayer.Team ~= -1 and ToPlayer.Team == FromPlayer.Team then
             addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Cannot attack capital from teammate", {}, {}, {}, {}));
             skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
@@ -154,7 +150,6 @@ function Server_AdvanceTurn_End(game, addNewOrder)
         end
 
         if allPlayersOwningCapitalsSize == 1 then
-            print("REACHED1")
             ---@type PlayerID
             for playerid, _ in pairs(allPlayersOwningCapitals) do
                 if game.Game.PlayingPlayers[playerid].Team == -1 then
@@ -163,7 +158,6 @@ function Server_AdvanceTurn_End(game, addNewOrder)
             end
         end
         if allTeamsOwningCapitalsSize == 1 then
-            print("REACHED2")
             ---@type TeamID
             local winningteamID;
 
