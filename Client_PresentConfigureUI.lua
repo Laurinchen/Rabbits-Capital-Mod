@@ -21,7 +21,6 @@ local function UpdateUIStructureTypeInfo()
     UIStructureTypeInfo.SetText("Current structure selected: " .. StructureTypeNames[ChosenStructureType]);
 end
 
-
 function UIStructureTypeInteracted()
     ---@type {text: string, selected: fun()}[]
     local options = {};

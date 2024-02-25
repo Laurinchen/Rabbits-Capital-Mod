@@ -69,7 +69,7 @@ Depending on the host settings there might be bonuses for taking over other capi
 
     ---@type Label
     local UICapitalDefenceBonus = UI.CreateLabel(UIGroup);
-    UICapitalDefenceBonus.SetText("How many armies a capital is worth (defensive only): " ..
+    UICapitalDefenceBonus.SetText("How many extra armies are killed when attacking a capital: " ..
         tostring(Mod.Settings.CapitalDefenceBonus));
 
     ---@type HorizontalLayoutGroup
