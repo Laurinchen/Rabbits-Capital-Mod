@@ -83,8 +83,13 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
             local order1 = WL.GameOrderPlayCardReinforcement.Create(card.ID, playerid);
             ---@type GameOrderDeploy
             local order2 = WL.GameOrderDeploy.Create(playerid, Mod.Settings.CapitalBonus, territoryid, true);
+            print("playerid", playerid);
+            print("territoryid", territoryid);
+            print("card.ID", card.ID)
+            print("Mod.Settings.CapitalBonus", Mod.Settings.CapitalBonus)
             addNewOrder(order1);
             addNewOrder(order2);
+            print("REACHED")
         end
     end
 end
