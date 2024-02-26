@@ -14,66 +14,78 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
     ---@type GameStanding
     local standing = game.ServerGame.LatestTurnStanding;
 
-    if Mod.Settings.PlayersChooseCapitalLocation and game.Game.TurnNumber == 1 then
-        ---@type table<PlayerID, TerritoryStanding[]>
-        local playerterritories = {};
+    if game.Game.TurnNumber == 1 then
+        if Mod.Settings.PlayersChooseCapitalLocation then
+            ---@type table<PlayerID, TerritoryStanding[]>
+            local playerterritories = {};
 
-        for playerid, _ in pairs(game.Game.PlayingPlayers) do
-            playerterritories[playerid] = {};
-        end
+            for playerid, _ in pairs(game.Game.PlayingPlayers) do
+                playerterritories[playerid] = {};
+            end
 
-        for _, stand in pairs(standing.Territories) do
-            if not stand.IsNeutral then
-                ---@type PlayerID
-                local playerid = stand.OwnerPlayerID;
-                if InKeys(PrivateGameData.PlayerCapitals, stand.OwnerPlayerID) then
-                    table.insert(
-                        playerterritories[playerid], standing.Territories[PrivateGameData.PlayerCapitals[playerid]]);
-                    goto continue
+            for _, stand in pairs(standing.Territories) do
+                if not stand.IsNeutral then
+                    ---@type PlayerID
+                    local playerid = stand.OwnerPlayerID;
+                    if InKeys(PrivateGameData.PlayerCapitals, stand.OwnerPlayerID) then
+                        table.insert(
+                            playerterritories[playerid], standing.Territories[PrivateGameData.PlayerCapitals[playerid]]);
+                        goto continue
+                    end
+                    table.insert(playerterritories[playerid], stand);
                 end
-                table.insert(playerterritories[playerid], stand);
-            end
-            ::continue::
-        end
-
-        ---@type table<PlayerID, TerritoryID>
-        local PlayerCapitals = {}
-        ---@type table
-        local PlayerGameData = Mod.PlayerGameData;
-
-        for playerid, territories in pairs(playerterritories) do
-            ---@type TerritoryStanding
-            local chosenterritory = territories[math.random(#territories)]
-
-            ---@type table<EnumStructureType, integer>
-            local structures = chosenterritory.Structures;
-
-            PlayerCapitals[playerid] = chosenterritory.ID;
-
-
-            if PlayerGameData[playerid] == nil then
-                PlayerGameData[playerid] = {};
+                ::continue::
             end
 
-            PlayerGameData[playerid].CapitalLocation = chosenterritory.ID;
+            ---@type table<PlayerID, TerritoryID>
+            local PlayerCapitals = {}
+            ---@type table
+            local PlayerGameData = Mod.PlayerGameData;
 
-            if structures == nil or structures[Mod.Settings.StructureType] == nil then
+            for playerid, territories in pairs(playerterritories) do
+                ---@type TerritoryStanding
+                local chosenterritory = territories[math.random(#territories)]
+
                 ---@type table<EnumStructureType, integer>
-                local temp = {};
-                temp[Mod.Settings.StructureType] = 1;
+                local structures = chosenterritory.Structures;
 
-                ---@type TerritoryModification
-                local terrmod = WL.TerritoryModification.Create(chosenterritory.ID);
-                terrmod.AddStructuresOpt = temp;
+                PlayerCapitals[playerid] = chosenterritory.ID;
 
-                ---@type GameOrderEvent
-                local order = WL.GameOrderEvent.Create(playerid, "Establishing Capital", {}, { terrmod }, {}, {});
-                addNewOrder(order);
+
+                if PlayerGameData[playerid] == nil then
+                    PlayerGameData[playerid] = {};
+                end
+
+                PlayerGameData[playerid].CapitalLocation = chosenterritory.ID;
+
+                if structures == nil or structures[Mod.Settings.StructureType] == nil then
+                    ---@type table<EnumStructureType, integer>
+                    local temp = {};
+                    temp[Mod.Settings.StructureType] = 1;
+
+                    ---@type TerritoryModification
+                    local terrmod = WL.TerritoryModification.Create(chosenterritory.ID);
+                    terrmod.AddStructuresOpt = temp;
+
+                    ---@type GameOrderEvent
+                    local order = WL.GameOrderEvent.Create(playerid, "Establishing Capital", {}, { terrmod }, {}, {});
+                    addNewOrder(order);
+                end
             end
+            Mod.PlayerGameData = PlayerGameData
+            PrivateGameData.PlayerCapitals = PlayerCapitals;
+            Mod.PrivateGameData = PrivateGameData;
         end
-        Mod.PlayerGameData = PlayerGameData
-        PrivateGameData.PlayerCapitals = PlayerCapitals;
-        Mod.PrivateGameData = PrivateGameData;
+        for playerid, territoryid in pairs(Mod.PrivateGameData.PlayerCapitals) do
+            ---@type ReinforcementCardInstance
+            local card = WL.ReinforcementCardInstance.Create(Mod.Settings.CapitalBonus);
+            ---@type GameOrderPlayCardReinforcement
+            local order1 = WL.GameOrderPlayCardReinforcement.Create(card.ID, playerid);
+            ---@type GameOrderDeploy
+            local order2 = WL.GameOrderDeploy.Create(playerid, Mod.Settings.CapitalBonus, territoryid, true);
+            addNewOrder(order1);
+            addNewOrder(order2);
+        end
     end
 end
 
@@ -170,7 +182,6 @@ function Server_AdvanceTurn_End(game, addNewOrder)
                     table.insert(winners, playerid);
                 end
             end
-
         end
 
         if #winners ~= 0 then
