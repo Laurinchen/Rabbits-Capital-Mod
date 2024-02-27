@@ -76,16 +76,6 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
             PrivateGameData.PlayerCapitals = PlayerCapitals;
             Mod.PrivateGameData = PrivateGameData;
         end
-        for playerid, territoryid in pairs(Mod.PrivateGameData.PlayerCapitals) do
-            ---@type ReinforcementCardInstance
-            local card = WL.ReinforcementCardInstance.Create(Mod.Settings.CapitalBonus);
-            ---@type GameOrderPlayCardReinforcement
-            local order1 = WL.GameOrderPlayCardReinforcement.Create(card.ID, playerid);
-            ---@type GameOrderDeploy
-            local order2 = WL.GameOrderDeploy.Create(playerid, Mod.Settings.CapitalBonus, territoryid, true);
-            addNewOrder(order1);
-            addNewOrder(order2);
-        end
     end
 end
 
