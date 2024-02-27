@@ -78,10 +78,4 @@ function Server_StartGame(game, standing)
         cards[playerid].WholeCards = wholecards;
     end
     standing.Cards = cards;
-
-    for playerid, _ in pairs(game.Game.PlayingPlayers) do
-        for cardinstanceid, cardinstance in pairs(standing.Cards[playerid].WholeCards) do
-            print(playerid, cardinstanceid, cardinstance.proxyType);
-        end
-    end
 end
